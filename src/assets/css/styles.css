@@ -1,3 +1,7 @@
+@font-face {
+  font-family: "PixelOperator8";
+  src: url("../font/PixelOperator8.ttf") format("truetype"); }
+
 * {
   margin: 0;
   padding: 0;
@@ -5,5 +9,67 @@
 
 body {
   background-image: url("../img/stars3.gif");
+  font-family: "PixelOperator8", sans-serif;
+  font-size: 18px;
   color: #f1e4e4;
   margin: 0; }
+
+.fx-row {
+  display: flex;
+  flex-direction: row; }
+
+.fx-column {
+  display: flex;
+  flex-direction: column; }
+
+.fx-space-between {
+  justify-content: space-between; }
+
+.fx-center {
+  justify-content: center; }
+
+.fx-items-center {
+  align-items: center; }
+
+header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding-bottom: 10px;
+  height: 220px; }
+
+header p {
+  color: #17e917; }
+
+header h1 {
+  font-size: 3rem; }
+
+header #page-title {
+  display: flex;
+  width: 50%;
+  min-width: 600px;
+  align-items: center;
+  justify-content: center; }
+
+nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 55px;
+  font-size: 1.25rem; }
+
+nav ul {
+  list-style: none;
+  display: flex;
+  justify-content: space-evenly; }
+
+nav li {
+  padding: 1rem 2rem; }
+
+@media screen and (max-width: 768px) {
+  header #name-text {
+    width: 300px; }
+  nav li, a {
+    padding: 5px;
+    font-size: 13px; } }

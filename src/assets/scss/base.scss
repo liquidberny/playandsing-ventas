@@ -1,5 +1,10 @@
 @import 'variables';
 
+@font-face {
+    font-family: "PixelOperator8";
+    src: url("../font/PixelOperator8.ttf") format("truetype");
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -8,8 +13,8 @@
   
 body {
     background-image: $background-image;
-    // font-family: $font-family;
-    // font-size: $font-size;
-    color: $content;
+    font-family: "PixelOperator8", sans-serif;    
+    font-size: $font-size;
+    color: $color;
     margin: 0;
   }
