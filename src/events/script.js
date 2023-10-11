@@ -101,7 +101,7 @@ function displayTable(events) {
 
         const imagePath = `../assets/img/events/`;
 
-        eventosList.forEach((evento) => {
+        events.forEach((evento) => {
           const eventDiv = document.createElement("div");
           eventDiv.classList.add("event");
           
