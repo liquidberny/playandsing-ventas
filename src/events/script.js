@@ -186,7 +186,7 @@ function applyFilters() {
   displayTable(filteredEvents);
 }
 
-// Funcion con la logica para filtrar las casas.
+// Funcion con la logica para filtrar los eventos.
 function filterEvents(events, text, minPrice, maxPrice) {
 
   return events.filter( event =>
