@@ -103,9 +103,7 @@ nav li {
     font-size: 13px; } }
 
 #events {
-  border-color: #f1ff33ee;
-  background-image: url("/assets/images/goldglitter.gif");
-  color: #000000; }
+  border-color: #f1ff33ee; }
 
 .event-list {
   width: 100%;
@@ -117,6 +115,7 @@ nav li {
   border: 5px solid #f3fd61dc;
   background-color: #fffb00ee;
   border-style: outset;
+  color: #000000;
   width: 45%;
   height: 850px;
   display: flex;
