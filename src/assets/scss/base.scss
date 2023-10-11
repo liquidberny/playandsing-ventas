@@ -18,3 +18,27 @@ body {
     color: $color;
     margin: 0;
   }
+
+  main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  
+    padding: 45px 90px;
+    width: 70vw;
+  
+    border-width: 5px;
+    border-spacing: 2px;
+    border-style: outset;
+    border-collapse: separate;
+    border-color: #e917bc;
+  
+    margin-bottom: 20px;
+  }

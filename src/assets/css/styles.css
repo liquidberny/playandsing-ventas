@@ -14,6 +14,25 @@ body {
   color: #f1e4e4;
   margin: 0; }
 
+main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; }
+
+section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 45px 90px;
+  width: 70vw;
+  border-width: 5px;
+  border-spacing: 2px;
+  border-style: outset;
+  border-collapse: separate;
+  border-color: #e917bc;
+  margin-bottom: 20px; }
+
 .fx-row {
   display: flex;
   flex-direction: row; }
@@ -67,9 +86,53 @@ nav ul {
 nav li {
   padding: 1rem 2rem; }
 
+@media screen and (max-width: 1024px) {
+  header > h1 {
+    font-size: 2rem; }
+  nav li, a {
+    padding: 5px;
+    font-size: 15px; } }
+
 @media screen and (max-width: 768px) {
   header #name-text {
     width: 300px; }
+  #page-title > h1 {
+    font-size: 1rem; }
   nav li, a {
     padding: 5px;
     font-size: 13px; } }
+
+#events {
+  border-color: #f1ff33ee;
+  background-image: url("/assets/images/goldglitter.gif");
+  color: #000000; }
+
+.event-list {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-flow: wrap; }
+
+.event {
+  border: 5px solid #f3fd61dc;
+  background-color: #fffb00ee;
+  border-style: outset;
+  width: 45%;
+  height: 850px;
+  display: flex;
+  flex-direction: column;
+  margin: 2.5px; }
+
+.event-image {
+  height: 60%;
+  width: 100%; }
+
+.event-image img {
+  width: 100%;
+  height: 100%;
+  padding-bottom: 5px; }
+
+.event-details {
+  height: 40%;
+  width: 100%;
+  background-color: #fffb00ee; }
