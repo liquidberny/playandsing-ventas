@@ -94,6 +94,53 @@ eventosList.forEach((item) => {
   console.log(item);
 });
 
+// Funcion que controla el despliegue de un array de RealEstate en la tabla, asi como el mensaje a mostrar.
+function displayTable(eventos) {
+
+  clearTable();
+
+  showLoadingMessage();
+
+  setTimeout(() => {
+
+    if (eventos.length === 0) {
+
+      showNotFoundMessage();
+
+    } else {
+
+        hideMessage();
+
+        const tablaBody = document.getElementById('data-table-body');
+
+        const imagePath = `../assets/img/events`;
+
+        eventos.forEach(eventos => {
+
+          const row = document.createElement('tr');
+
+          row.innerHTML = `
+            <td> ${eventos.id} </td>
+            <td> <img src="${imagePath + eventos.image}" alt="${eventos.name}" width="100"> </td>
+            <td>${eventos.name}</td>
+            <td>${eventos.description}</td>
+            <td>${eventos.fecha}</td>
+            <td>${eventos.lugar}</td>
+            <td>${eventos.pais}</td>
+            <td>${formatCurrency(eventos.price)}</td>
+          `;
+
+          tablaBody.appendChild(row);
+
+        });
+
+    }
+
+  }, 2000);
+
+}
+
+
 const eventContainer = document.querySelector(".event-list");
 const imagePath = `../assets/img/events/`;
 
@@ -122,3 +169,80 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
+// funcion para limpiar tabla no estoy seguro si es necesario
+
+function clearTable() {
+  const tableBody = document.getElementById('data-table-body');
+
+  tableBody.innerHTML = '';
+}
+
+
+// funcion muestra mensaje de carga
+
+function showLoadingMessage() {
+  const message = document.getElementById('message');
+
+  message.innerHTML = 'Espera jeje cargando...';
+
+  message.style.display = 'block';
+}
+
+// Funcion que muestra mensaje de que no se encuentraron datos
+function showNotFoundMessage() {
+  const message = document.getElementById('message');
+
+  message.innerHTML = 'No hay eventos con tus filtros especificos.';
+
+  message.style.display = 'block';
+}
+
+// Funcion que oculta mensaje
+function hideMessage() {
+  const message = document.getElementById('message');
+
+  message.style.display = 'none';
+}
+
+// Funcion que inicializa los eventos de los botones del filto
+function initButtonsHandler() {
+
+  document.getElementById('filter-form').addEventListener('submit', event => {
+    event.preventDefault();
+    applyFilters();
+  });
+
+  document.getElementById('reset-filters').addEventListener('click', () => {
+    document.querySelectorAll('input.filter-field').forEach(input => input.value = '');
+    applyFilters();
+  });
+
+}
+
+// Funcion que gestiona la aplicacion del filtro a los datos y su despliegue.
+function applyFilters() {
+  const filterText = document.getElementById('text').value.toLowerCase();;
+  const filterPais = parseFloat(document.getElementById('pais').value);
+  const filterMinPrice = parseFloat(document.getElementById('price-min').value);
+  const filterMaxPrice = parseFloat(document.getElementById('price-max').value);
+
+  const filteredEventos = filterEventos(eventosList, filterText, filterPais, filterMinPrice, filterMaxPrice);
+
+  displayTable(filteredEventos);
+}
+
+// Funcion con la logica para filtrar los eventos.
+function filterEventos(eventos, text, pais, minPrice, maxPrice) {
+
+  return eventos.filter( eventos =>
+      (!pais || eventos.pais === pais) &&
+      (!minPrice || eventos.price >= minPrice) &&
+      (!maxPrice || eventos.price <= maxPrice) &&
+      (!text     || eventos.name.toLowerCase().includes(text) || eventos.description.toLowerCase().includes(text))
+    );
+}
+
+
+displayTable(eventosList);
+
+initButtonsHandler();
