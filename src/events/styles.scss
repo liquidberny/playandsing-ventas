@@ -33,3 +33,39 @@
   width: 100%;
   background-color: #fffb00ee;
 }
+/* Estilos para la sección de filtros */
+#filter-section {
+  padding: 2rem;
+  border: none;
+
+  border-spacing: 2px;
+  border-collapse: separate;
+  border: 5px outset #f1ff33ee;
+
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  border-radius: 3px;
+}
+
+/* Estilos para los campos de filtro */
+input[type="text"],
+input[type="number"] {
+  flex-grow: 1;
+  min-width: 200px;
+  font-size: 1rem;
+  padding: 1rem;
+
+  border-spacing: 2px;
+  border-collapse: separate;
+  border: 5px outset #f1ff33ee;
+
+  border-radius: 3px;
+}
+
+button{
+  border-spacing: 2px;
+  border-collapse: separate;
+  border: 5px outset #f1ff33ee;
+}
+
