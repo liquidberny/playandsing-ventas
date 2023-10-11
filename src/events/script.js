@@ -82,13 +82,14 @@ const evento6 = new eventos(
 const eventosList = [evento1, evento2, evento3, evento4, evento5, evento6];
 
 
-function displayTable(houses) {
+function displayTable(events) {
+  clearEvents();
 
   showLoadingMessage();
 
   setTimeout(() => {
 
-    if (houses.length === 0) {
+    if (events.length === 0) {
 
       showNotFoundMessage();
 
@@ -128,6 +129,13 @@ function displayTable(houses) {
 
 }
 
+// Funcion que limpia la tabla
+function clearEvents() {
+  const tableBody = document.querySelector('.event-list');
+
+  tableBody.innerHTML = '';
+}
+
 // Funcion que muestra mensaje de carga
 function showLoadingMessage() {
   const message = document.querySelector('.message');
@@ -141,7 +149,7 @@ function showLoadingMessage() {
 function showNotFoundMessage() {
   const message = document.querySelector('.message');
 
-  message.innerHTML = 'No se encontraron casas con el filtro proporcionado.';
+  message.innerHTML = 'No se encontraron eventos con el filtro proporcionado.';
 
   message.style.display = 'block';
 }
@@ -153,4 +161,40 @@ function hideMessage() {
   message.style.display = 'none';
 }
 
+//Region del formulario
+function initButtonsHandler() {
+
+  document.getElementById('filter-form').addEventListener('submit', event => {
+    event.preventDefault();
+    applyFilters();
+  });
+
+  document.getElementById('reset-filters').addEventListener('click', () => {
+    document.querySelectorAll('input.filter-field').forEach(input => input.value = '');
+    applyFilters();
+  });
+
+}
+
+function applyFilters() {
+  const filterText = document.getElementById('text').value.toLowerCase();;
+  const filterMinPrice = parseFloat(document.getElementById('price-min').value);
+  const filterMaxPrice = parseFloat(document.getElementById('price-max').value);
+
+  const filteredEvents = filterEvents(eventosList, filterText,  filterMinPrice, filterMaxPrice);
+
+  displayTable(filteredEvents);
+}
+
+// Funcion con la logica para filtrar las casas.
+function filterEvents(events, text, minPrice, maxPrice) {
+
+  return events.filter( event =>
+      (!minPrice || event.precio >= minPrice) &&
+      (!maxPrice || event.precio <= maxPrice) &&
+      (!text     || event.name.toLowerCase().includes(text) || event.description.toLowerCase().includes(text))
+    );
+}
+
 displayTable(eventosList);
+initButtonsHandler();
