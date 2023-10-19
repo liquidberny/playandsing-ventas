@@ -70,6 +70,8 @@ function displayView(events) {
 
     });
 
+
+    
   }
 
   // Funcion que limpia la tabla
