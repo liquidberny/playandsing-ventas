@@ -42,3 +42,19 @@ table {
   }
 
 }
+
+
+button {
+
+  cursor: pointer;
+
+
+  &.btn-delete {
+    border: 2px solid #ec3434;
+  }
+
+  &.btn-delete:hover {
+    background-color: lighten(#ec3434, 37%);
+  }
+
+}

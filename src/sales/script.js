@@ -1,10 +1,18 @@
 //Modelos
 class Sale {
-  constructor(id, eventName, lugar, saleDate, clientName, noTickets, salePrice) {
+  constructor(
+    id,
+    eventName,
+    lugar,
+    saleDate,
+    clientName,
+    noTickets,
+    salePrice
+  ) {
     this.id = id; // Identificador de la venta
     this.eventName = eventName; // Nombre del evento
     this.lugar = lugar; // Teléfono del cliente
-    this.clientName = clientName; // Nombre del cliente 
+    this.clientName = clientName; // Nombre del cliente
     this.noTickets = noTickets; //Numero de entradas vendidas
     this.saleDate = saleDate; // Fecha de la venta
     this.salePrice = salePrice; // Precio de la venta
@@ -12,96 +20,116 @@ class Sale {
 }
 
 function mapAPIToSales(data) {
-  return data.map(item => {
+  return data.map((item) => {
     return new Sale(
       item.id,
-      item.eventName,
+      item.nombre_evento,
       item.lugar,
-      new Date(item.saleDate),
-      item.clientName,
-      item.noTickets,
-      item.salePrice
+      new Date(item.fecha_compra),
+      item.cliente,
+      item.numero_boletos,
+      item.precio_venta
     );
   });
 }
 
 //Manipulacion del DOM
-function displayView(events) {
-
+function displaySalesView(sales) {
   clearTable();
 
   showLoadingMessage();
 
-  if (events.length === 0) {
+  setTimeout(() => {
+    if (sales.length === 0) {
+      showNotFoundMessage();
+    } else {
+      hideMessage();
 
-    showNotFoundMessage();
-
-  } else {
-
-    hideMessage();
-
-    displayTable(events);
-  }
-
+      displayTable(sales);
+    }
+  }, 2000);
 }
 
-  // Funcion que agrega los datos de los modelos de casas a la tabla.
-  function displayTable(events) {
+function displayClearSalesView() {
+  clearTable();
 
-    const tablaBody = document.getElementById('data-table-body');
+  showInitialMessage();
+}
 
-    events.forEach(house => {
+// Funcion que agrega los datos de los modelos de casas a la tabla.
+function displayTable(sales) {
+  const tablaBody = document.getElementById("data-table-body");
 
-      const row = document.createElement('tr');
+  sales.forEach((sale) => {
+    const row = document.createElement("tr");
 
-      row.innerHTML = `
-        <td> ${house.id} </td>
-        <td> <img src="${imagePath + house.image}" alt="${house.name}" width="100"> </td>
-        <td>${house.name}</td>
-        <td>${house.description}</td>
-        <td>${house.bedrooms}</td>
-        <td>${house.bathrooms}</td>
-        <td>${formatCurrency(house.price)}</td>
-        <td>${formatM2(house.landArea)}</td>
-        <td>${formatM2(house.constructionArea)}</td>
+    row.innerHTML = `
+    <td>${sale.id}</td>
+    <td>${sale.clientName}</td>
+    <td>${sale.eventName}</td>
+    <td>${sale.lugar}</td>
+    <td class="text-right">${sale.noTickets}</td>
+    <td>${formatDate(sale.saleDate)}</td>
+    <td class="text-right">${formatCurrency(sale.salePrice)}</td>
+    <td>
+      <button class="btn-delete" data-sale-id="${sale.id}">Eliminar</button>
+    </td>
       `;
 
-      tablaBody.appendChild(row);
+    tablaBody.appendChild(row);
+  });
+  //initDeleteSaleButtonHandler();
+}
 
-    });
+// Funcion que limpia la tabla
+function clearTable() {
+  const tableBody = document.getElementById("data-table-body");
 
+  tableBody.innerHTML = "";
+}
 
-    
-  }
+// Funcion que muestra mensaje de carga
+function showLoadingMessage() {
+  const message = document.getElementById("message");
 
-  // Funcion que limpia la tabla
-  function clearTable() {
-    const tableBody = document.getElementById('data-table-body');
+  message.innerHTML = "Cargando...";
 
-    tableBody.innerHTML = '';
-  }
-  
-  // Funcion que muestra mensaje de carga
-  function showLoadingMessage() {
-    const message = document.getElementById('message');
+  message.style.display = "block";
+}
 
-    message.innerHTML = 'Cargando...';
+// Funcion que muestra mensaje de carga
+function showInitialMessage() {
+  const message = document.getElementById("message");
 
-    message.style.display = 'block';
-  }
+  message.innerHTML = "No se ha realizado una consulta de ventas.";
 
-  function showNotFoundMessage() {
-    const message = document.getElementById('message');
+  message.style.display = "block";
+}
 
-    message.innerHTML = 'No se encontraron casas con el filtro proporcionado.';
+function showNotFoundMessage() {
+  const message = document.getElementById("message");
 
-    message.style.display = 'block';
-  }
+  message.innerHTML = "No se encontraron casas con el filtro proporcionado.";
 
-    // Funcion que oculta mensaje
-    function hideMessage() {
-      const message = document.getElementById('message');
-  
-      message.style.display = 'none';
-    }
-  
+  message.style.display = "block";
+}
+
+// Funcion que oculta mensaje
+function hideMessage() {
+  const message = document.getElementById("message");
+
+  message.style.display = "none";
+}
+
+//#region Consumo de datos desde API
+function getSalesData() {
+  fetchAPI(`${apiURL}/entradas`, "GET").then((data) => {
+    const salesList = mapAPIToSales(data);
+    displaySalesView(salesList);
+  });
+}
+//#endregion
+
+//#region inicializamos funcionalidad
+getSalesData();
+//#endregion
