@@ -78,7 +78,7 @@ function displayTable(sales) {
 
     tablaBody.appendChild(row);
   });
-  //initDeleteSaleButtonHandler();
+  initDeleteSaleButtonHandler();
 }
 
 // Funcion que limpia la tabla
@@ -121,6 +121,26 @@ function hideMessage() {
   message.style.display = "none";
 }
 
+function resetSales() {
+  getSalesData();
+}
+//#region boton para eliminar y para crear
+function initDeleteSaleButtonHandler() {
+
+  document.querySelectorAll('.btn-delete').forEach(button => {
+
+    button.addEventListener('click', () => {
+
+      const saleId = button.getAttribute('data-sale-id'); // Obtenemos el ID de la venta
+      deleteSale(saleId); // Llamamos a la función para eleminar la venta
+
+    });
+
+  });
+
+}
+//#endregion
+
 //#region Consumo de datos desde API
 function getSalesData() {
   fetchAPI(`${apiURL}/entradas`, "GET").then((data) => {
@@ -128,7 +148,24 @@ function getSalesData() {
     displaySalesView(salesList);
   });
 }
+
+
+function deleteSale(saleId) {
+
+  const confirm = window.confirm(`¿Estás seguro de que deseas eliminar la venta ${saleId}?`);
+
+  if (confirm) {
+
+    fetchAPI(`${apiURL}/entradas/${saleId}`, 'DELETE')
+      .then(() => {
+        resetSales();
+        window.alert("Venta eliminada.");
+      });
+
+  }
+}
 //#endregion
+
 
 //#region inicializamos funcionalidad
 getSalesData();
