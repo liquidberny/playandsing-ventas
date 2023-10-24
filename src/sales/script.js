@@ -33,6 +33,27 @@ function mapAPIToSales(data) {
   });
 }
 
+class EventosDescriptor {
+
+  constructor(id, name, price) {
+    this.id = id;
+    this.name = name;
+    this.price = price;
+  }
+}
+
+function mapAPIToEventosDescriptors(data) {
+  return data.map(item => {
+    return new EventosDescriptor(
+      item.id,
+      item.name,
+      item.price
+    );
+  });
+}
+
+//fin region
+
 //Manipulacion del DOM
 function displaySalesView(sales) {
   clearTable();
@@ -124,7 +145,105 @@ function hideMessage() {
 function resetSales() {
   getSalesData();
 }
-//#region boton para eliminar y para crear
+
+//region de filtros a ver q onda
+
+function initFilterButtonsHandler() {
+
+  document.getElementById('filter-form').addEventListener('submit', event => {
+    event.preventDefault();
+    searchSales();
+  });
+
+  document.getElementById('reset-filters').addEventListener('click', () => clearSales());
+
+}
+
+
+function clearSales() {
+  document.querySelector('select.filter-field').selectedIndex = 0;
+  document.querySelectorAll('input.filter-field').forEach(input => input.value = '');
+
+  displayClearSalesView();
+}
+
+
+function resetSales() {
+  document.querySelector('select.filter-field').selectedIndex = 0;
+  document.querySelectorAll('input.filter-field').forEach(input => input.value = '');
+  searchSales();
+}
+
+
+function searchSales() {
+  const eventName = document.getElementById('real-estate-filter').value;
+  const clientName = document.getElementById('customer-filter').value;
+  const salesman = document.getElementById('salesman-filter').value;
+  const lugar = document.getElementById('date-filter').value;
+
+  getSalesData(eventName, clientName, lugar, saleDate);
+}
+
+//#endregion
+
+//#region 5. BOTONES PARA AGREGAR Y ELIMINAR VENTAS (VIEW)
+
+function initAddSaleButtonsHandler() {
+
+  document.getElementById('addSale').addEventListener('click', () => {
+    openAddSaleModal()
+  });
+
+  document.getElementById('modal-background').addEventListener('click', () => {
+    closeAddSaleModal();
+  });
+
+  document.getElementById('sale-form').addEventListener('submit', event => {
+    event.preventDefault();
+    processSubmitSale();
+  });
+
+}
+
+
+function openAddSaleModal() {
+  document.getElementById('sale-form').reset();
+  document.getElementById('modal-background').style.display = 'block';
+  document.getElementById('modal').style.display = 'block';
+}
+
+
+function closeAddSaleModal() {
+  document.getElementById('sale-form').reset();
+  document.getElementById('modal-background').style.display = 'none';
+  document.getElementById('modal').style.display = 'none';
+}
+
+
+function processSubmitSale() {
+  const clientName = document.getElementById('customer-name-field').value;
+  const noTickets = document.getElementById('customer-phone-field').value;
+  const eventName = document.getElementById('real-estate-field').value;
+  const salePrice = document.getElementById('sale-price-field').value;
+  const saleDate = document.getElementById('sale-date-field').value;
+  // const salesman = document.getElementById('salesman-field').value;
+  const lugar = document.getElementById('notes-field').value;
+
+  const saleToSave = new Sale(
+    null,
+    clientName,
+    noTickets,
+    salePrice,
+    // salesman,
+    eventName,
+    parseFloat(salePrice),
+    lugar
+  );
+
+  createSale(saleToSave);
+}
+
+
 function initDeleteSaleButtonHandler() {
 
   document.querySelectorAll('.btn-delete').forEach(button => {
@@ -139,9 +258,39 @@ function initDeleteSaleButtonHandler() {
   });
 
 }
+
+
+//cargar datos de modelos para form view
+
+// Funcion que agrega los datos de los modelos de casas a la tabla.
+function displayEventoOptions(eventos) {
+
+  const eventosFilter = document.getElementById('real-estate-filter');
+  const eventosModal = document.getElementById('real-estate-field');
+
+  eventos.forEach(evento => {
+
+    const optionFilter = document.createElement('option');
+
+    optionFilter.value = evento.name;
+    optionFilter.text = `${evento.name} - ${formatCurrency(evento.price)}`;
+
+    eventosFilter.appendChild(optionFilter);
+
+    const optionModal = document.createElement('option');
+
+    optionModal.value = realEstate.name;
+    optionModal.text = `${evento.name} - ${formatCurrency(evento.price)}`;
+
+    eventosModal.appendChild(optionModal);
+  });
+
+}
+
 //#endregion
 
 //#region Consumo de datos desde API
+
 function getSalesData() {
   fetchAPI(`${apiURL}/entradas`, "GET").then((data) => {
     const salesList = mapAPIToSales(data);
@@ -149,6 +298,28 @@ function getSalesData() {
   });
 }
 
+function getSalesData(realEstate, customerName, salesman, saleDate) {
+
+  const url = buildGetSalesDataUrl(realEstate, customerName, salesman, saleDate);
+
+  fetchAPI(url, 'GET')
+    .then(data => {
+      const salesList = mapAPIToSales(data);
+      displaySalesView(salesList);
+    });
+}
+
+
+function createSale(sale) {
+
+  fetchAPI(`${apiURL}/sales`, 'POST', sale)
+    .then(sale => {
+      closeAddSaleModal();
+      resetSales();
+      window.alert(`Venta ${sale.id} creada correctamente.`);
+    });
+
+}
 
 function deleteSale(saleId) {
 
@@ -166,6 +337,46 @@ function deleteSale(saleId) {
 }
 //#endregion
 
+//#region filtros
+
+// funcion que genera la URL para consultar ventas con filtros
+
+function buildGetSalesDataUrl(realEstate, customerName, salesman, saleDate) {
+  
+  const url = new URL(`${apiURL}/sales`);
+
+  if (realEstate) {
+    url.searchParams.append('realEstate', realEstate);
+  }
+
+  if (customerName) {
+    url.searchParams.append('customerName', customerName);
+  }
+
+  if (salesman) {
+    url.searchParams.append('salesman', salesman);
+  }
+
+  if (saleDate) {
+    url.searchParams.append('saleDate', saleDate);
+  }
+
+  return url;
+}
+
+
+//region crear venta
+
+function createSale(sale) {
+
+    fetchAPI(`${apiURL}/sales`, 'POST', sale)
+        .then(sale => {
+            closeAddSaleModal();
+            resetSales();
+            window.alert(`Venta ${sale.id} creada correctamente.`);
+        });
+
+}
 
 //#region inicializamos funcionalidad
 getSalesData();
