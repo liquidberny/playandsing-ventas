@@ -2,20 +2,20 @@
 class Sale {
   constructor(
     id,
-    eventName,
+    nombre_evento,
     lugar,
-    saleDate,
-    clientName,
-    noTickets,
-    salePrice
+    fecha_compra,
+    cliente,
+    numero_boletos,
+    precio_venta
   ) {
     this.id = id; // Identificador de la venta
-    this.eventName = eventName; // Nombre del evento
+    this.nombre_evento = nombre_evento; // Nombre del evento
     this.lugar = lugar; // Teléfono del cliente
-    this.clientName = clientName; // Nombre del cliente
-    this.noTickets = noTickets; //Numero de entradas vendidas
-    this.saleDate = saleDate; // Fecha de la venta
-    this.salePrice = salePrice; // Precio de la venta
+    this.cliente = cliente; // Nombre del cliente
+    this.numero_boletos = numero_boletos; //Numero de entradas vendidas
+    this.fecha_compra = fecha_compra; // Fecha de la venta
+    this.precio_venta = precio_venta; // Precio de la venta
   }
 }
 
@@ -32,27 +32,6 @@ function mapAPIToSales(data) {
     );
   });
 }
-
-class EventosDescriptor {
-
-  constructor(id, name, price) {
-    this.id = id;
-    this.name = name;
-    this.price = price;
-  }
-}
-
-function mapAPIToEventosDescriptors(data) {
-  return data.map(item => {
-    return new EventosDescriptor(
-      item.id,
-      item.name,
-      item.price
-    );
-  });
-}
-
-//fin region
 
 //Manipulacion del DOM
 function displaySalesView(sales) {
@@ -86,12 +65,12 @@ function displayTable(sales) {
 
     row.innerHTML = `
     <td>${sale.id}</td>
-    <td>${sale.clientName}</td>
-    <td>${sale.eventName}</td>
+    <td>${sale.cliente}</td>
+    <td>${sale.nombre_evento}</td>
     <td>${sale.lugar}</td>
-    <td class="text-right">${sale.noTickets}</td>
-    <td>${formatDate(sale.saleDate)}</td>
-    <td class="text-right">${formatCurrency(sale.salePrice)}</td>
+    <td class="text-right">${sale.numero_boletos}</td>
+    <td>${formatDate(sale.fecha_compra)}</td>
+    <td class="text-right">${formatCurrency(sale.precio_venta)}</td>
     <td>
       <button class="btn-delete" data-sale-id="${sale.id}">Eliminar</button>
     </td>
@@ -145,48 +124,21 @@ function hideMessage() {
 function resetSales() {
   getSalesData();
 }
+//#region boton para eliminar y para crear
+function initDeleteSaleButtonHandler() {
 
-//region de filtros a ver q onda
+  document.querySelectorAll('.btn-delete').forEach(button => {
 
-function initFilterButtonsHandler() {
+    button.addEventListener('click', () => {
 
-  document.getElementById('filter-form').addEventListener('submit', event => {
-    event.preventDefault();
-    searchSales();
+      const saleId = button.getAttribute('data-sale-id'); // Obtenemos el ID de la venta
+      deleteSale(saleId); // Llamamos a la función para eleminar la venta
+
+    });
+
   });
 
-  document.getElementById('reset-filters').addEventListener('click', () => clearSales());
-
 }
-
-
-function clearSales() {
-  document.querySelector('select.filter-field').selectedIndex = 0;
-  document.querySelectorAll('input.filter-field').forEach(input => input.value = '');
-
-  displayClearSalesView();
-}
-
-
-function resetSales() {
-  document.querySelector('select.filter-field').selectedIndex = 0;
-  document.querySelectorAll('input.filter-field').forEach(input => input.value = '');
-  searchSales();
-}
-
-
-function searchSales() {
-  const eventName = document.getElementById('real-estate-filter').value;
-  const clientName = document.getElementById('customer-filter').value;
-  const salesman = document.getElementById('salesman-filter').value;
-  const lugar = document.getElementById('date-filter').value;
-
-  getSalesData(eventName, clientName, lugar, saleDate);
-}
-
-//#endregion
-
-//#region 5. BOTONES PARA AGREGAR Y ELIMINAR VENTAS (VIEW)
 
 function initAddSaleButtonsHandler() {
 
@@ -205,92 +157,42 @@ function initAddSaleButtonsHandler() {
 
 }
 
-
 function openAddSaleModal() {
   document.getElementById('sale-form').reset();
   document.getElementById('modal-background').style.display = 'block';
   document.getElementById('modal').style.display = 'block';
 }
-
-
 function closeAddSaleModal() {
   document.getElementById('sale-form').reset();
   document.getElementById('modal-background').style.display = 'none';
   document.getElementById('modal').style.display = 'none';
 }
 
-
 function processSubmitSale() {
-  const clientName = document.getElementById('customer-name-field').value;
-  const noTickets = document.getElementById('customer-phone-field').value;
-  const eventName = document.getElementById('real-estate-field').value;
-  const salePrice = document.getElementById('sale-price-field').value;
-  const saleDate = document.getElementById('sale-date-field').value;
-  // const salesman = document.getElementById('salesman-field').value;
-  const lugar = document.getElementById('notes-field').value;
+  const cliente = document.getElementById('customer-name-field').value;
+  const nombre_evento = document.getElementById('event-name-field').value;
+  const location = document.getElementById('location-name-field').value;
+  const numberOfTickets = document.getElementById('number-tickets-field').value;
+  const precio_venta = document.getElementById('sale-price-field').value;
+  const fecha_compra = document.getElementById('sale-date-field').value;
+
 
   const saleToSave = new Sale(
     null,
-    clientName,
-    noTickets,
-    salePrice,
-    // salesman,
-    eventName,
-    parseFloat(salePrice),
-    lugar
+    nombre_evento,
+    location,
+    fecha_compra,
+    cliente,
+    parseFloat(numberOfTickets),
+    parseFloat(precio_venta),
+    
   );
 
   createSale(saleToSave);
 }
-
-
-function initDeleteSaleButtonHandler() {
-
-  document.querySelectorAll('.btn-delete').forEach(button => {
-
-    button.addEventListener('click', () => {
-
-      const saleId = button.getAttribute('data-sale-id'); // Obtenemos el ID de la venta
-      deleteSale(saleId); // Llamamos a la función para eleminar la venta
-
-    });
-
-  });
-
-}
-
-
-//cargar datos de modelos para form view
-
-// Funcion que agrega los datos de los modelos de casas a la tabla.
-function displayEventoOptions(eventos) {
-
-  const eventosFilter = document.getElementById('real-estate-filter');
-  const eventosModal = document.getElementById('real-estate-field');
-
-  eventos.forEach(evento => {
-
-    const optionFilter = document.createElement('option');
-
-    optionFilter.value = evento.name;
-    optionFilter.text = `${evento.name} - ${formatCurrency(evento.price)}`;
-
-    eventosFilter.appendChild(optionFilter);
-
-    const optionModal = document.createElement('option');
-
-    optionModal.value = realEstate.name;
-    optionModal.text = `${evento.name} - ${formatCurrency(evento.price)}`;
-
-    eventosModal.appendChild(optionModal);
-  });
-
-}
-
 //#endregion
 
 //#region Consumo de datos desde API
-
 function getSalesData() {
   fetchAPI(`${apiURL}/entradas`, "GET").then((data) => {
     const salesList = mapAPIToSales(data);
@@ -298,28 +200,6 @@ function getSalesData() {
   });
 }
 
-function getSalesData(realEstate, customerName, salesman, saleDate) {
-
-  const url = buildGetSalesDataUrl(realEstate, customerName, salesman, saleDate);
-
-  fetchAPI(url, 'GET')
-    .then(data => {
-      const salesList = mapAPIToSales(data);
-      displaySalesView(salesList);
-    });
-}
-
-
-function createSale(sale) {
-
-  fetchAPI(`${apiURL}/sales`, 'POST', sale)
-    .then(sale => {
-      closeAddSaleModal();
-      resetSales();
-      window.alert(`Venta ${sale.id} creada correctamente.`);
-    });
-
-}
 
 function deleteSale(saleId) {
 
@@ -335,49 +215,21 @@ function deleteSale(saleId) {
 
   }
 }
-//#endregion
-
-//#region filtros
-
-// funcion que genera la URL para consultar ventas con filtros
-
-function buildGetSalesDataUrl(realEstate, customerName, salesman, saleDate) {
-  
-  const url = new URL(`${apiURL}/sales`);
-
-  if (realEstate) {
-    url.searchParams.append('realEstate', realEstate);
-  }
-
-  if (customerName) {
-    url.searchParams.append('customerName', customerName);
-  }
-
-  if (salesman) {
-    url.searchParams.append('salesman', salesman);
-  }
-
-  if (saleDate) {
-    url.searchParams.append('saleDate', saleDate);
-  }
-
-  return url;
-}
-
-
-//region crear venta
 
 function createSale(sale) {
 
-    fetchAPI(`${apiURL}/sales`, 'POST', sale)
-        .then(sale => {
-            closeAddSaleModal();
-            resetSales();
-            window.alert(`Venta ${sale.id} creada correctamente.`);
-        });
+  fetchAPI(`${apiURL}/entradas`, 'POST', sale)
+    .then(sale => {
+      closeAddSaleModal();
+      resetSales();
+      window.alert(`Venta ${sale.id} creada correctamente.`);
+    });
 
 }
+//#endregion
+
 
 //#region inicializamos funcionalidad
+initAddSaleButtonsHandler();
 getSalesData();
 //#endregion
